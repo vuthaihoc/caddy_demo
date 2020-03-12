@@ -1,0 +1,16 @@
+localhost {
+    on startup /usr/local/opt/mysql@5.7/bin/mysql.server start
+    on shutdown /usr/local/opt/mysql@5.7/bin/mysql.server stop
+}
+
+http://caddy.demo {
+  supervisor {
+      command php-cgi
+      args -b 9800
+      redirect_stdout stdout
+      redirect_stderr stderr
+      restart_policy always
+    }
+  root ./
+  fastcgi / localhost:9800 php
+}

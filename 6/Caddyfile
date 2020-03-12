@@ -1,0 +1,4 @@
+http://caddy.demo {
+  websocket /echo "php ./psysh"
+  root ./
+}

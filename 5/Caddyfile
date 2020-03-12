@@ -1,0 +1,20 @@
+http://dev.123dok.com {
+  on startup /usr/local/opt/mysql@5.7/bin/mysql.server start
+  on shutdown /usr/local/opt/mysql@5.7/bin/mysql.server stop
+  supervisor {
+      command php-cgi
+      args -b 9800
+      redirect_stdout stdout
+      redirect_stderr stderr
+      restart_policy always
+    }
+  supervisor {
+      command php
+      args artisan queue:listen
+  }
+  root /Users/hocvt/Documents/webroot/gldoc-main/public
+  fastcgi / localhost:9800 php
+  rewrite {
+    to {path} {path}/ /index.php?{query}
+    }
+}
