@@ -7,9 +7,7 @@ http://caddy.demo {
   supervisor {
       command php-cgi
       args -b 9800
-      redirect_stdout stdout
-      redirect_stderr stderr
-      restart_policy always
+      restart_policy never
     }
   root ./
   fastcgi / localhost:9800 php

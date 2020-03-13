@@ -4,13 +4,12 @@ http://dev.123dok.com {
   supervisor {
       command php-cgi
       args -b 9800
-      redirect_stdout stdout
-      redirect_stderr stderr
-      restart_policy always
+      restart_policy never
     }
   supervisor {
       command php
       args artisan queue:listen
+      restart_policy never
   }
   root /Users/hocvt/Documents/webroot/gldoc-main/public
   fastcgi / localhost:9800 php

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Replace Apache/Nginx with Caddy</title>
+    <meta charset="utf-8">
+    <style>
+      @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+      @import url(https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
+      @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+
+      body { font-family: 'Droid Serif'; }
+      h1, h2, h3 {
+        font-family: 'Yanone Kaffeesatz';
+        font-weight: normal;
+      }
+      .remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
+    </style>
+  </head>
+  <body>
+    <textarea id="source">
+
+class: center, middle
+
+# Replace Apache/Nginx with Caddy
+
+=== Hanoi 03/2020 ===
+
+---
+
+# Status (14/3/2010)
+
+- Stable : 1.0.4
+- Pre-release : 2.0 beta 15
+
+---
+
+# Download for MacOs 
+
+[Download for MacOs](https://caddyserver.com/download/darwin/amd64?plugins=http.cache,http.locale,http.minify,http.nobots,http.ratelimit,http.recaptcha,http.supervisor&license=personal&telemetry=on)
+
+Customize https://caddyserver.com/v1/download
+
+---
+
+# Before start
+
+- Turn off apache2/xampp/nginx/mamp/mysql/...
+
+---
+
+class: center, middle
+
+# Examples
+
+---
+
+# Examples
+
+## 1. Simple web host
+
+Run caddy in webroot folder.
+
+```bash
+xyz@localhost:here$ cd ~/webroot
+xyz@localhost:here$ caddy
+```
+
+Go to [http://localhost:2015/](http://localhost:2015/)
+
+Arguments https://caddyserver.com/v1/docs/cli
+
+- -port
+- -host
+- ...
+
+```bash
+xyz@localhost:here$ cd ~/webroot
+xyz@localhost:here$ caddy -port 80 -host caddy.demo
+```
+
+=> Zero config file
+
+---
+
+# Examples
+
+## 2. Simple config file
+
+_Caddyfile content_
+
+```
+http://localhost:80
+```
+Run
+
+```bash
+xyz@localhost:here$ cd ~/webroot
+xyz@localhost:here$ caddy
+```
+
+- Or Caddyfile
+
+=> [Caddyfile syntax](https://caddyserver.com/v1/docs/caddyfile)
+
+---
+
+# Examples
+
+## 2. Simple config file
+
+### Standard HTTP Directives
+
+- https://caddyserver.com/v1/docs/fastcgi
+- https://caddyserver.com/v1/docs/gzip
+- https://caddyserver.com/v1/docs/log
+- https://caddyserver.com/v1/docs/on
+- https://caddyserver.com/v1/docs/proxy
+- https://caddyserver.com/v1/docs/rewrite
+- https://caddyserver.com/v1/docs/root
+
+---
+
+# Examples
+
+## 2. Simple config file
+
+### Plugins HTTP Directives
+
+- https://caddyserver.com/v1/docs/http.cache
+- https://caddyserver.com/v1/docs/http.minify
+- https://caddyserver.com/v1/docs/http.nobots
+- https://caddyserver.com/v1/docs/http.ratelimit
+
+---
+
+# Examples
+
+## 3. Run PHP
+
+Use directives 
+
+- https://caddyserver.com/v1/docs/on
+  - `on startup /etc/init.d/php-fpm start`
+  - `on shutdown /etc/init.d/php-fpm stop`
+- https://caddyserver.com/v1/docs/http.supervisor
+```
+ supervisor {
+      command php-cgi
+      args -b 9800
+      redirect_stdout stdout
+      redirect_stderr stderr
+      restart_policy always
+    }
+```
+- https://caddyserver.com/v1/docs/fastcgi
+  - `fastcgi / localhost:9800 php`
+  - `fastcgi /blog/ 127.0.0.1:9000 php`
+
+---
+
+# Examples
+
+## 4. Start/Stop mysql
+
+```Caddyfile
+localhost {
+    on startup /usr/local/opt/mysql@5.7/bin/mysql.server start
+    on shutdown /usr/local/opt/mysql@5.7/bin/mysql.server stop
+}
+```
+
+---
+
+# Examples
+
+## 5. Run your laravel project
+
+```Caddyfile
+http://dev.123dok.com {
+  on startup /usr/local/opt/mysql@5.7/bin/mysql.server start
+  on shutdown /usr/local/opt/mysql@5.7/bin/mysql.server stop
+  supervisor {
+      command php-cgi
+      args -b 9800
+      redirect_stdout stdout
+      redirect_stderr stderr
+      restart_policy always
+    }
+  supervisor {
+      command php
+      args artisan queue:listen
+  }
+  root /Users/hocvt/Documents/webroot/gldoc-main/public
+  fastcgi / localhost:9800 php
+  rewrite {
+    to {path} {path}/ /index.php?{query}
+    }
+}
+```
+
+---
+
+# Examples
+
+## 6. Web-Socket
+
+- https://caddyserver.com/v1/docs/websocket
+
+```Caddyfile
+http://caddy.demo {
+  websocket /echo "php ./psysh"
+  root ./
+}
+```
+
+---
+
+# Examples
+
+## n. And more ...
+
+https://github.com/caddyserver/examples
+
+---
+
+# One more thing
+
+- Start with Operating System https://github.com/caddyserver/caddy/tree/master/dist/init
+
+---
+
+class: center, middle
+
+# Thank for listening !!!
+
+
+    </textarea>
+    <script src="https://remarkjs.com/downloads/remark-latest.min.js">
+    </script>
+    <script>
+      var slideshow = remark.create();
+    </script>
+  </body>
+</html>
